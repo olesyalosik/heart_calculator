@@ -9,6 +9,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  static const operations = ['+','-','*','/','%'];
   String input = '';
   double result = 0;
   String output = '';
@@ -42,6 +43,10 @@ switch (operation) {
         setState(() {
           result = result / double.parse(output);
         });
+        case '%':
+        setState(() {
+          result =result%double.parse(output);
+        });
     }
      }
           else{
@@ -57,8 +62,10 @@ switch (operation) {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: const Color.fromARGB(255, 247, 240, 255),
         body: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Padding(
                 padding:
@@ -75,10 +82,91 @@ switch (operation) {
                   ),
                   child: Text(
                     input,
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold),
+                    style:  TextStyle(
+                        fontSize: MediaQuery.of(context).size.width / 12, fontWeight: FontWeight.bold),
                   ),
                 ),
+              ),
+              Divider(color: Color.fromARGB(255, 77, 20, 163),
+              thickness: 2,),
+              Padding(padding: EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                    setState(() {
+                       input = '';
+    result = 0;
+    output = '';
+    operation = '';
+                    });
+                    },
+                    child: HeartButton(buttonName: 'AC'),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                 if(input!=''){
+                        if(!operations.contains(input[input.length-1])){
+                         if(output!=''){
+
+                         setState(() {
+                            input = input.substring(0, input.length - output.length) ;
+                          output = '-'+output;
+                          input=input+output;
+                         });
+                         }
+                         else{
+setState(() {
+                          input = '-'+input;
+                          
+});
+                         }
+                        }
+                 }
+                    },
+                    child: HeartButton(buttonName: '+/-'),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                     if(input.isNotEmpty){
+                       setState(() {
+                     if(input.isNotEmpty){
+                         if (operation == '') {
+                          operation = '%';
+                          result = double.parse(input);
+                          input = input + '%';
+                        } else {
+                          calculate();
+                          input = result.toString() + '%';
+                          output = '';
+                          operation = '%';
+                        }
+                     }
+                      });
+                     }
+                    },
+                    child: HeartButton(buttonName: '%'),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                       setState(() {
+                        if (operation == '') {
+                          operation = '/';
+                          result = double.parse(input);
+                          input = input + '/';
+                        } else {
+                          calculate();
+                          input = result.toString() + '/';
+                          output = '';
+                          operation = '/';
+                        }
+                      });
+                    },
+                    child: HeartButton(buttonName: '/'),
+                  ),
+                ],
               ),
               Row(
                 children: [
@@ -117,7 +205,8 @@ switch (operation) {
                   ),
                   GestureDetector(
                     onTap: () {
-                      setState(() {
+                     if(input.isNotEmpty){
+                       setState(() {
                         if (operation == '') {
                           operation = '*';
                           result = double.parse(input);
@@ -129,6 +218,7 @@ switch (operation) {
                           operation = '*';
                         }
                       });
+                     }
                     },
                     child: HeartButton(buttonName: '*'),
                   ),
@@ -171,7 +261,8 @@ switch (operation) {
                   ),
                   GestureDetector(
                     onTap: () {
-                      setState(() {
+                     if(input.isNotEmpty){
+                       setState(() {
                         if (operation == '') {
                           operation = '-';
                           result = double.parse(input);
@@ -183,6 +274,7 @@ switch (operation) {
                           operation = '-';
                         }
                       });
+                     }
                     },
                     child: HeartButton(buttonName: '-'),
                   ),
@@ -225,7 +317,8 @@ switch (operation) {
                   ),
                   GestureDetector(
                     onTap: () {
-                      setState(() {
+                    if(input.isNotEmpty){
+                        setState(() {
                         if (operation == '') {
                           operation = '+';
                           result = double.parse(input);
@@ -237,6 +330,7 @@ switch (operation) {
                           operation = '+';
                         }
                       });
+                    }
                     },
                     child: HeartButton(buttonName: '+'),
                   ),
@@ -246,18 +340,23 @@ switch (operation) {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      if(input!=''){
-                         setState(() {
-                        if(output!=''){
+                      if(input.isNotEmpty){
+                        if(operations.contains(input[input.length-1])){
+                          setState(() {
+                            operation='';
+               input = input.substring(0, input.length - 1);
+                          });
+                        }
+                        else{
+                          setState(() {
+                            if(output!=''){
                           output = output.substring(0, output.length - 1);
                         }
-                        else if(output=='' && operation!=''){
-operation='';
+                         input = input.substring(0, input.length - 1);
+                          });
+                           
                         }
-                        input = input.substring(0, input.length - 1);
-                       
-                       
-                      });
+                        
                       }
                      
                     },
@@ -276,28 +375,37 @@ operation='';
                   ),
                   GestureDetector(
                     onTap: () {
-                      setState(() {
-                        input = input + '.';
-                        if (operation != '') {
-                          output = output + '.';
-                        }
-                      });
+                      if(input.isNotEmpty){
+                        setState(() {
+                          if(!operations.contains(input[input.length-1])){
+                            if(output.isNotEmpty){
+                              output = output+'.';
+                            }
+                            input=input+'.';
+                          }
+                        });
+                      }
                     },
                     child: HeartButton(buttonName: '.'),
                   ),
                   GestureDetector(
                     onTap: () {
-                      setState((){
+                    if(input.isNotEmpty){
+                      if(output.isNotEmpty){
+setState((){
 calculate();
                           input = result.toString() ;
                           output = '';
                           operation = '';
                       });
+                      }
+                        
+                    }
                     },
                     child: HeartButton(buttonName: '='),
                   ),
                 ],
-              ),
+              ),],),)
             ],
           ),
         ),
